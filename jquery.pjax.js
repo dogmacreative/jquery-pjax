@@ -137,16 +137,29 @@ function handleSubmit(event, container, options) {
 //
 // Returns nothing.
 function handleSubmitClick(event, container, options, form) {
+  var $target = $(event.target)
+      targetType = event.target.tagName.toUpperCase();
+
+  // Our target maybe an element wihin a button
+  if (targetType != 'INPUT' && targetType != 'BUTTON') {
+    var $inputParents = $target.parents('button')
+
+    // Only switch out if a better alternative exists
+    if ($inputParents.length) {
+      $target = $inputParents.first()
+    }
+  }
+
   if (!form) {
-    var $parents = $(event.currentTarget).parents('form')
+    var $parents = $target.parents('form')
 
     if (!$parents.length)
       throw "If submitting element is not contained with target form, please specify form as forth parameter"
 
-    form = $(event.currentTarget).parents('form').first()[0]
+    form = $parents[0]
   }
 
-  formSubmissionHandler(form, event.currentTarget, container, options)
+  formSubmissionHandler(form, $target[0], container, options)
 
   event.preventDefault()
 }
